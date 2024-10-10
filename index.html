@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="manifest" href="/manifest.json">
+
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+
+        /* Animasi sebelum halaman muncul */
+        #loader {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background-color: #4C1D95; /* Ungu */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loader-spinner {
+            border: 5px solid #ddd;
+            border-top: 5px solid white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Efek hover memperbesar kolom */
+        .book-item {
+            perspective: 1000px; /* Perspektif untuk flip 3D */
+            height: 300px; /* Atur tinggi kolom buku */
+        }
+
+        .book-card {
+            position: relative;
+            width: 100%;
+            height: 100%; /* Tinggi penuh untuk card */
+            text-align: center;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            display: flex; /* Tambahkan display flex */
+            flex-direction: column; /* Susun konten secara vertikal */
+            justify-content: space-between; /* Rata antara konten */
+        }
+
+        .book-item:hover .book-card {
+            transform: rotateY(180deg); /* Efek flip saat hover */
+        }
+
+        /* Gaya untuk sisi depan dan belakang */
+        .book-front, .book-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 8px;
+            display: flex; /* Tambahkan display flex */
+            flex-direction: column; /* Susun konten secara vertikal */
+            justify-content: center; /* Rata tengah konten */
+            align-items: center; /* Rata tengah konten */
+        }
+
+        /* Sisi depan (gambar dan judul buku) */
+        .book-front {
+            background-color: #6B46C1;
+        }
+
+        /* Sisi belakang (deskripsi buku) */
+        .book-back {
+            background-color: #4A148C;
+            color: white;
+            transform: rotateY(180deg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+
+        /* Input search styling */
+        #searchInput {
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* Gaya untuk cover buku */
+        .book-cover {
+            width: 100px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body class="bg-purple-900 text-white">
+    <!-- Loader -->
+    <div id="loader">
+        <div class="loader-spinner"></div>
+    </div>
+
+    <!-- Konten halaman -->
+    <div class="container mx-auto text-center py-10" style="display:none;" id="main-content">
+        <div class="bg-gradient-to-r from-purple-700 to-purple-500 rounded-t-lg py-4">
+            <h1 class="text-4xl font-bold">INVESTOS E-BOOK</h1>
+            <p> your personal business OS</p>
+        </div>
+        <!-- Form pencarian buku -->
+        <div class="mt-6">
+            <input 
+                type="text" 
+                id="searchInput" 
+                placeholder="search book..." 
+                class="p-2 rounded-lg w-80 text-black"
+                onkeyup="searchBooks()" />
+        </div>
+        <p class="mt-6 text-xl">Select free book you want to read</p>
+        <div id="book-list" class="flex justify-center flex-wrap mt-10 space-x-6 space-y-6 items-stretch"></div>
+
+        <!-- Get More Books Button -->
+        <div class="mt-10">
+            <a href="https://www.gramedia.com/" target="_blank">
+                <button class="bg-purple-700 text-white py-2 px-4 rounded-lg hover:bg-purple-600 transition">
+                    Get More Books...
+                </button>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Menghapus animasi loading setelah halaman selesai dimuat
+        window.onload = function() {
+            document.getElementById('loader').style.display = 'none'; // Sembunyikan loader
+            document.getElementById('main-content').style.display = 'block'; // Tampilkan konten
+        };
+
+        // Daftar link Google Drive, judul, deskripsi, dan cover buku
+        const books = [
+            {//1
+                title: "The Psychology of Money: Timeless Lessons on Wealth, Greed, and Happiness-Harriman House Limited, Morgan Housel(2020)", 
+                link: "https://drive.google.com/file/d/1oBkggOps1mWfhsudTrjZ99_o3RFLHRuO/view?usp=sharing", 
+                description: "Niall Ferguson follows the money to tell the human story behind the evolution of finance, from its origins in ancient Mesopotamia to the latest upheavals on what he calls Planet Finance. Bread, cash, dosh, dough, loot, lucre, moolah, readies, the wherewithal: Call it what you like, it matters.", 
+                cover: "foto/psikology.png"
+            },
+            {//2
+                title: "How and when to Invest in the Stock Market, Kantilal R. Patel (2000)", 
+                link: "https://drive.google.com/file/d/1OclWeOWOUqHaaRH3P3Pb8GdAeSNX1MXX/view?usp=drive_link", 
+                description: "How & When to Invest in the Stock Market has an approach is simple and easy to use and follow. It shows investors how and when to invest in stocks, mutual funds and index options. The trading strategies are based on market timing techniques, with emphasis on technical analysis", 
+                cover: "foto/how and when.png"
+            },
+            {//3
+                title: "How to Think Like Benjamin Graham and Invest Like Warren Buffett, Lawrence A. Cunningham (2001)", 
+                link: "https://drive.google.com/file/d/1Ckdrq0-pNiatyFNBjJs9dulHmG7Z3Cbo/view?usp=drive_link", 
+                description: "How to Think Like Benjamin Graham and Invest Like Warren Buffett by Lawrence A. Cunningham explores the investment philosophies of Benjamin Graham and Warren Buffett", 
+                cover: "foto/how to think.png"
+            },
+            {//4
+                title: "The Bitcoin Standard: The Decentralized Alternative to Central Banking, Saifedean Ammous (2018)", 
+                link: "https://drive.google.com/file/d/1fizTJ-z-7V6ZYZVIlnItHF1b2GmjFVPi/view?usp=drive_link", 
+                description: "The Bitcoin Standard, by Saifedean Ammous explores Bitcoin as a decentralized digital cash system and hard money alternative, tracing the history of money and its modern role in transferring value.", 
+                cover: "foto/bitcoin standar.png"
+            },
+            {//5
+                title: "The book of crypto: the complete guide to understanding Bitcoin, cryptocurrencies and digital assets, Henri Arslanian(2022)", 
+                link: "https://drive.google.com/file/d/1m5ghNQmSyCzq8cIg4GxKmB6nWmkj6w9G/view?usp=drive_link", 
+                description: "Henri Arslanian's The Book of Crypto: The Complete Guide to Understanding Bitcoin, Cryptocurrencies, and Digital Assets offers a comprehensive overview of the crypto landscape.", 
+                cover: "foto/THE BOOK.png"
+            },
+            {//6
+                title: "Financial management and real options-Wiley (2003)", 
+                link: "https://drive.google.com/file/d/1CU63S_5nvKToZoQ-bprbq479eUnj_vl8/view?usp=drive_link", 
+                description: "Jack Broyles Financial Management and Real Options explores the intersection of financial management principles and real options theory.", 
+                cover: "foto/FINANCIAL.png"
+            },
+            {//7
+                title: " How Successful Traders Think, Trade and Invest-Dearborn Financial Publishing, John W. Person(2009)", 
+                link: "https://drive.google.com/file/d/1dIokjs5z_bDk0G_0qUHg2kS7BKnBdjWl/view?usp=drive_link", 
+                description: "John W. Person’s How Successful Traders Think, Trade and Invest explores the mindset and strategies of successful traders, offering insights into effective trading practices.", 
+                cover: "foto/MARKET.png"
+            },
+            {//8
+                title: "Investing for dummies-Wiley (2021)", 
+                link: "https://drive.google.com/file/d/1pN0lyBE8cUKtKSuKmmPVwggnGAeQR07d/view?usp=drive_link", 
+                description: "Investing for Dummies covers the essentials of investing, offering practical advice for beginner investors.", 
+                cover: "foto/BRAIN.png"
+            }
+        ];
+
+        // Menampilkan daftar buku
+        const bookList = document.getElementById("book-list");
+        function displayBooks(booksToDisplay) {
+            bookList.innerHTML = ""; // Kosongkan daftar buku
+            booksToDisplay.forEach(book => {
+                const bookItem = document.createElement("div");
+                bookItem.className = "book-item w-60 h-80"; // Ubah ukuran kolom sesuai kebutuhan
+                bookItem.innerHTML = `
+                    <div class="book-card">
+                        <div class="book-front">
+                            <img src="${book.cover}" alt="${book.title}" class="book-cover" />
+                            <h2 class="font-bold">${book.title}</h2>
+                        </div>
+                        <div class="book-back">
+                            <p>${book.description}</p>
+                            <a href="${book.link}" target="_blank" class="text-blue-300 hover:underline">Read Book</a>
+                        </div>
+                    </div>
+                `;
+                bookList.appendChild(bookItem);
+            });
+        }
+
+        // Fungsi pencarian buku
+        function searchBooks() {
+            const query = document.getElementById("searchInput").value.toLowerCase();
+            const filteredBooks = books.filter(book => 
+                book.title.toLowerCase().includes(query) ||
+                book.description.toLowerCase().includes(query)
+            );
+            displayBooks(filteredBooks);
+        }
+
+        // Tampilkan semua buku saat pertama kali memuat halaman
+        displayBooks(books);
+    </script>
+</body>
+</html>

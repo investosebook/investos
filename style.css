@@ -1,0 +1,28 @@
+.book-item {
+    perspective: 1000px; /* Perspektif untuk flip 3D */
+    height: 300px; /* Atur tinggi kolom buku */
+}
+
+.book-card {
+    position: relative;
+    width: 100%;
+    height: 100%; /* Tinggi penuh untuk card */
+    text-align: center;
+    transform-style: preserve-3d;
+    transition: transform 0.6s;
+    display: flex; /* Tambahkan display flex */
+    flex-direction: column; /* Susun konten secara vertikal */
+    justify-content: space-between; /* Rata antara konten */
+}
+
+.book-front, .book-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 8px;
+    display: flex; /* Tambahkan display flex */
+    flex-direction: column; /* Susun konten secara vertikal */
+    justify-content: center; /* Rata tengah konten */
+    align-items: center; /* Rata tengah konten */
+}
